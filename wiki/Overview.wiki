@@ -17,7 +17,7 @@ I took the Excel and PowerPoint specs, converted them to HTML, fixed up lots of 
 Take the HTML files and use them to generate code in a language of your choice.
 
 ==Usage + output==
-
+<pre>
 ./pyOffice.py -f somefile.xls
 
 [*]Opening file /home/root/tmp/a3730uez.xls
@@ -118,3 +118,5 @@ Take the HTML files and use them to generate code in a language of your choice.
         BYTE cantLockServerB = 0x1 (1)
         BYTE noSizeToServerB = 0x0 (0)
         BYTE isTable = 0x0 (0)
+
+</pre>
