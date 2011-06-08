@@ -1,0 +1,17 @@
+#Brief introduction to py-office-tools
+
+=Overview=
+
+This is a set of tools to support reading (and eventually writing) of the Excel and PowerPoint binary file formats. It relies on the OleFileIO_PL module to deal with the underlying CBFF format. This tool focuses on the storages/streams that contain the application level data for Excel and PowerPoint.
+
+==What it does==
+
+Prints out detailed information about Excel and PowerPoint records ("Workbook" and "PowerPoint Document" streams), as well as property sets in the DocumentSummary and DocumentSummaryInformation streams.
+
+==How it does==
+
+I took the Excel and PowerPoint specs, converted them to HTML, fixed up lots of broken ass stuff, and then used those as input to a code generator that spit out Python structures describing the records.
+
+==If you don't like my code (likely) or python==
+
+Take the HTML files and use them to generate code in a language of your choice.
