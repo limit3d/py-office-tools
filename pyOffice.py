@@ -10,8 +10,11 @@ import getopt
 
 #
 def usage(prog):
-    print("Usage: %s [ -f OLE file ] [ -h help ] [ -d debug ] [ -x extract stream (use -o for output file)]"
-            "[ -o output file ] [ -O offset into stream (extraction) ]" %
+    print("Usage: %s [ -f OLE file ] [ -h help ] [ -d debug ] [ -x extract stream (use -o for output file)]\n"
+            "\t[ -o output file ] [ -O offset into stream (extraction) ]\n\n"
+            "#For -x, use a Unix path to your stream: -x 'ObjectPool/_1363433832/Contents'\n"
+            "#DO NOT use the 'Root Storage' in the path, it is assumed already\n"
+            %
             (prog))
     sys.exit(1)
 
