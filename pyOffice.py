@@ -6,12 +6,12 @@ import dumpXL
 import dumpPPT
 from dumpProps import dumpPropSetStream
 import getopt
-
+import util
 
 #
 def usage(prog):
     print("Usage: %s [ -f OLE file ] [ -h help ] [ -d debug ] [ -x extract stream (use -o for output file)]\n"
-            "\t[ -o output file ] [ -O offset into stream (extraction) ]\n\n"
+            "\t[ -o output file ] [ -O offset into stream (extraction) ] [ -v verbose stream dumping ]\n\n"
             "#For -x, use a Unix path to your stream: -x 'ObjectPool/_1363433832/Contents'\n"
             "#DO NOT use the 'Root Storage' in the path, it is assumed already\n"
             %
@@ -21,11 +21,12 @@ def usage(prog):
 #
 if __name__ == "__main__":
 
+    verbose = False
     streamOffset = 0
     outputFile = fName = extractStream = None
 
     try:
-        opts, args = getopt.getopt(sys.argv[1:], "hf:dx:o:O:")
+        opts, args = getopt.getopt(sys.argv[1:], "hf:dx:o:O:v")
     except getopt.GetoptError, err:
         print str(err)
         usage(sys.argv[0])
@@ -41,6 +42,8 @@ if __name__ == "__main__":
             fName = a
         elif o == "-o":
             outputFile = a
+        elif o == "-v":
+            verbose = True
         elif o == "-d":
             OleFileIO_PL.set_debug_mode(True)
         else:
@@ -97,3 +100,12 @@ if __name__ == "__main__":
     #
     if ole.exists("\x05DocumentSummaryInformation"):
         dumpPropSetStream(ole, "\x05DocumentSummaryInformation")
+
+    #
+    if verbose:
+        paths = ole.getPaths()
+        for path in paths:
+            print "Opening %s" % (path)
+            stream = ole.openstream(path)
+            buf = stream.read()
+            sys.stdout.write(util.hexdump(buf, indent=4))

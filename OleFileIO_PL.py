@@ -779,6 +779,24 @@ class _OleDirectoryEntry:
         for kid in self.kids:
             kid.dump(tab + 2)
 
+    def getPaths(self, curPath="", paths=[]):
+
+        if self.entry_type == STGTY_ROOT:
+            for kid in self.kids:
+                kid.getPaths(curPath, paths)
+        elif self.entry_type == STGTY_STORAGE:
+            paths.append(curPath + self.name + "/")
+            for kid in self.kids:
+                kid.getPaths(curPath + self.name + "/", paths)
+        elif self.entry_type == STGTY_STREAM:
+            paths.append(curPath + self.name)
+        else:
+            print "ERROR: Invalid storage entry_type %d (%#x)" % (self.entry_type, self.entry_type)
+            sys.exit(1)
+
+        return paths
+
+
 
 #--- OleFileIO ----------------------------------------------------------------
 
@@ -1331,6 +1349,11 @@ class OleFileIO:
         self.direntries[sid] = _OleDirectoryEntry(entry, sid, self)
         return self.direntries[sid]
 
+    def getPaths(self):
+        """
+        Get a list of paths to all storages/streams
+        """
+        return self.root.getPaths()
 
     def dumpdirectory(self):
         """
