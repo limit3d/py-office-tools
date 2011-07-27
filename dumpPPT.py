@@ -3,6 +3,8 @@ import sys
 import struct
 from util import hexdump
 from pptRecs import recDict
+import zlib
+import binascii
 
 #
 PPT_HDR_LEN = 8
@@ -196,7 +198,7 @@ def dumpCurrentUser(buf):
     
 # count_offset is a list with count and offset as elements
 # ghetto pass by reference. sorry.
-def dumpPPD(buf, maxLen, depth, count_offset):
+def dumpPPD(buf, maxLen, depth, count_offset, recList=None):
 
     nRead = 0
     while nRead  < maxLen:
@@ -231,9 +233,13 @@ def dumpPPD(buf, maxLen, depth, count_offset):
         count_offset[REC_OFFSET] += PPT_HDR_LEN
 
         if not isAtom:
-            nRead += dumpPPD(buf[nRead:maxLen], min(maxLen - nRead, rLen), depth + 1, count_offset)
+            nRead += dumpPPD(buf[nRead:maxLen], min(maxLen - nRead, rLen), depth + 1, count_offset, recList)
             print "]"*depth, "End container %s" % rName
         else:
+
+            #only save atoms
+            if recList is not None:
+                recList.append((rType, buf[nRead:nRead+(min(rLen, maxLen - nRead))]))
 
             if rDesc:
                 printAtom(buf[nRead:nRead+(min(rLen, maxLen - nRead))], rLen, rDesc)
@@ -254,7 +260,9 @@ def dumpPPD(buf, maxLen, depth, count_offset):
     return nRead
 
 #
-def dump(ole):
+def dump(ole, **kwargs):
+
+    recList = []
     
     #
     pcu = ole.openstream("Current User")
@@ -268,4 +276,16 @@ def dump(ole):
     buf = ppd.read()
     ppdLen = len(buf)
     print ("*"*80+ "\n[*]Dumping 'PowerPoint Document' stream %#x (%d) bytes...\n") % (ppdLen, ppdLen)
-    dumpPPD(buf, ppdLen, 1, [1, 0])
+    dumpPPD(buf, ppdLen, 1, [1, 0], recList)
+
+    if "xole" in kwargs and kwargs["xole"]:
+        oleCount = 0
+        for (rType, rData) in recList:
+            if rType == 0x1011:
+                curFile = "ole_file_" + str(oleCount) + ".bin"
+                dec = zlib.decompress(rData[4:])
+                f = open(curFile, "wb")
+                f.write(dec)
+                f.close()
+                print "!Extracted %d bytes of embedded OLE to file %s" % (len(dec), curFile)
+                oleCount += 1
