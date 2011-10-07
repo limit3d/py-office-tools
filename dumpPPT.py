@@ -40,7 +40,7 @@ COMPLEX_TYPES = [
 def printPersist(data):
 
     maxLen = len(data)
-    startSheets = struct.unpack("L", data[:4])[0]
+    startSheets = struct.unpack("I", data[:4])[0]
     offset = 4
     start = startSheets & 0xfffff
     ns = (startSheets & 0xfff00000) >> 20
@@ -48,7 +48,7 @@ def printPersist(data):
 
     while ns > 0 and offset < maxLen:
 
-        sheet =  struct.unpack("L", data[offset:offset+4])[0]
+        sheet =  struct.unpack("I", data[offset:offset+4])[0]
         print "\tSheet offset %#x (%d)" % (sheet, sheet)
         offset += 4
         ns -= 1
@@ -115,7 +115,7 @@ def printAtom(rData, rLen, rDesc):
                 offset += 2
         elif fmt == "4":
             if ensure(fieldName, 4, nLeft):
-                val = struct.unpack("L", rData[offset:offset+4])[0]
+                val = struct.unpack("I", rData[offset:offset+4])[0]
                 if isComplex:
                     print "        %s.DWORD %s = %#x (%d)" % (fieldType, fieldName, val, val)
                 else:
@@ -141,7 +141,7 @@ def printAtom(rData, rLen, rDesc):
 
 #
 def getHdr(hdr):
-    rVerInst, rType, rLen = struct.unpack("HHL", hdr)
+    rVerInst, rType, rLen = struct.unpack("HHI", hdr)
     rVer = rVerInst & 0xf
     rInst = (rVerInst & 0xfff0) >> 4
     return (rVer, rInst, rType, rLen)
@@ -178,9 +178,9 @@ def dumpCurrentUser(buf):
     printHdr(rVer, rInst, rType, rLen, 1, 1, 0)
     
     (size, headerToken, offsetToCurrentEdit, lenUserName, docFileVersion,
-            majorVersion, minorVersion, unused) = struct.unpack("LLLHHBBH", buf[8:28])
+            majorVersion, minorVersion, unused) = struct.unpack("IIIHHBBH", buf[8:28])
     ansiUserName = buf[28:28+lenUserName]
-    relVersion = struct.unpack("L", buf[28+lenUserName:28+lenUserName+4])[0]
+    relVersion = struct.unpack("I", buf[28+lenUserName:28+lenUserName+4])[0]
     uniUserName = buf[28+lenUserName+4:]
     
     print("\tDWORD size %#x (%d)\n\tDWORD headerToken %#x (%d)\n"

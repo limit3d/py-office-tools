@@ -52,7 +52,7 @@ def printRec(rType, rLen, rData, rCount, rOffset):
                     offset += 2
             elif fmt == "4":
                 if ensure(fieldName, 4, nLeft):
-                    val = struct.unpack("L", rData[offset:offset+4])[0]
+                    val = struct.unpack("I", rData[offset:offset+4])[0]
                     print "        DWORD %s = %#x (%d)" % (fieldName, val, val)
                     offset += 4
             elif fmt[0] == "f":

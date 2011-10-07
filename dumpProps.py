@@ -73,7 +73,7 @@ def dumpPropSetStream(ole, streamName):
     print "*"*80, "\n[*]Dumping '%s' stream %#x (%d) bytes\n" % (streamName, dLen, dLen)
     
     #get the header
-    (wByteOrder, wFormat, dwOsVer, clsid, cSections) = struct.unpack("HHL16sL", data[:28])
+    (wByteOrder, wFormat, dwOsVer, clsid, cSections) = struct.unpack("HHI16sI", data[:28])
     curOffset = 28
     
     print "\nDumping property set header:\n"
@@ -85,7 +85,7 @@ def dumpPropSetStream(ole, streamName):
     for i in xrange(cSections):
         
         #fmtid/offset
-        (fmtid, dwOffset) = struct.unpack("16sL", data[curOffset:curOffset + 20])
+        (fmtid, dwOffset) = struct.unpack("16sI", data[curOffset:curOffset + 20])
         sections.append((fmtid, dwOffset))
         curOffset += 20
      
@@ -94,7 +94,7 @@ def dumpPropSetStream(ole, streamName):
     for (sectionID, sectionOffset) in sections:
         
         props = []
-        (cbSection, cProps) = struct.unpack("LL", data[sectionOffset:sectionOffset + 8])
+        (cbSection, cProps) = struct.unpack("II", data[sectionOffset:sectionOffset + 8])
         print "Section\tFMTID [%s] sectionOffset %#x (%d)" % (clsidStr(fmtid), sectionOffset, sectionOffset)
         print "\tcbSection %#x (%d) cProps %#x (%d)" % (cbSection, cbSection, cProps, cProps)
 
@@ -103,7 +103,7 @@ def dumpPropSetStream(ole, streamName):
         last = None
         for i in xrange(cProps):
         
-            (propid, offset) = struct.unpack("LL", data[curOffset:curOffset + 8])
+            (propid, offset) = struct.unpack("II", data[curOffset:curOffset + 8])
         
             cur = [propid, offset]
             props.append(cur)
@@ -125,7 +125,7 @@ def dumpPropSetStream(ole, streamName):
 
             #take into account the section start
             realOffset = pOff + sectionOffset
-            pType = struct.unpack("L", data[realOffset:realOffset + 4])[0]
+            pType = struct.unpack("I", data[realOffset:realOffset + 4])[0]
             try:
                 origType = pType
                 pType = pType & 0xfff
