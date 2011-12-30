@@ -293,7 +293,11 @@ recDict[0x4f] = ["MOVESEL", "unknown:", "v%", [u'Unknown']]
 recDict[0x56] = ["BUILTINFMTCOUNT", "unknown:", "v%", [u'Unknown']]
 recDict[0x57] = ["SUPER Code Page Table", "unknown:", "v%", [u'Unknown']]
 recDict[0x58] = ["TOOLBAR", "unknown:", "v%", [u'Unknown']]
-recDict[0x5d] = ["OBJ", "unknown:", "v%", [u'Unknown']]
+
+#this was manually changed
+recDict[0x5d] = ["OBJ", "unknown:", "[obj]%", [u'Unknown']]
+#
+
 recDict[0x61] = ["INTL", "unknown:", "v%", [u'Unknown']]
 recDict[0x62] = ["RTCLRTENTRY", "unknown:", "v%", [u'Unknown']]
 recDict[0x64] = ["MACROCH (MP)", "unknown:", "v%", [u'Unknown']]

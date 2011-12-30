@@ -4,6 +4,7 @@ import sys
 import struct
 from util import hexdump
 from xlRecs import recDict
+from manualRecPrinters import extraPrinters
 
 # when doing error recovery, the number of valid records to encounter
 # before declaring successful recovery. a valid record is defined as
@@ -71,6 +72,16 @@ def printRec(rType, rLen, rData, rCount, rOffset):
                 print "        Field '%s' is variable length, dumping rest of record:" % (fieldName)
                 sys.stdout.write(hexdump(rData[offset:], indent=12))
                 break
+            elif fmt[0] == "[":
+                try:
+                    handler = extraPrinters[fmt]
+                    o = handler(rData[offset:], nLeft)
+                    if o == -1:
+                        break
+                    else:
+                        offset += o
+                except KeyError:
+                    print "Error: no handler defined for custom format '%s'" % (fmt)
             else:
                 print "ERROR:Invalid format in record format string [%s]. Developer error!!" % (f)
                 sys.exit(1)
