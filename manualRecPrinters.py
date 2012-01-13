@@ -95,6 +95,263 @@ def optPrinter(data, dLen, propCount, depth):
             off += cLen
 
 #
+shapeTypeMap = {
+0:"msosptMin",
+1:"msosptRectangle",
+2:"msosptRoundRectangle",
+3:"msosptEllipse",
+4:"msosptDiamond",
+5:"msosptIsocelesTriangle",
+6:"msosptRightTriangle",
+7:"msosptParallelogram",
+8:"msosptTrapezoid",
+9:"msosptHexagon",
+10:"msosptOctagon",
+11:"msosptPlus",
+12:"msosptStar",
+13:"msosptArrow",
+14:"msosptThickArrow",
+15:"msosptHomePlate",
+16:"msosptCube",
+17:"msosptBalloon",
+18:"msosptSeal",
+19:"msosptArc",
+20:"msosptLine",
+21:"msosptPlaque",
+22:"msosptCan",
+23:"msosptDonut",
+24:"msosptTextSimple",
+25:"msosptTextOctagon",
+26:"msosptTextHexagon",
+27:"msosptTextCurve",
+28:"msosptTextWave",
+29:"msosptTextRing",
+30:"msosptTextOnCurve",
+31:"msosptTextOnRing",
+32:"msosptStraightConnector1",
+33:"msosptBentConnector2",
+34:"msosptBentConnector3",
+35:"msosptBentConnector4",
+36:"msosptBentConnector5",
+37:"msosptCurvedConnector2",
+38:"msosptCurvedConnector3",
+39:"msosptCurvedConnector4",
+40:"msosptCurvedConnector5",
+41:"msosptCallout1",
+42:"msosptCallout2",
+43:"msosptCallout3",
+44:"msosptAccentCallout1",
+45:"msosptAccentCallout2",
+46:"msosptAccentCallout3",
+47:"msosptBorderCallout1",
+48:"msosptBorderCallout2",
+49:"msosptBorderCallout3",
+50:"msosptAccentBorderCallout1",
+51:"msosptAccentBorderCallout2",
+52:"msosptAccentBorderCallout3",
+53:"msosptRibbon",
+54:"msosptRibbon2",
+55:"msosptChevron",
+56:"msosptPentagon",
+57:"msosptNoSmoking",
+58:"msosptSeal8",
+59:"msosptSeal16",
+60:"msosptSeal32",
+61:"msosptWedgeRectCallout",
+62:"msosptWedgeRRectCallout",
+63:"msosptWedgeEllipseCallout",
+64:"msosptWave",
+65:"msosptFoldedCorner",
+66:"msosptLeftArrow",
+67:"msosptDownArrow",
+68:"msosptUpArrow",
+69:"msosptLeftRightArrow",
+70:"msosptUpDownArrow",
+71:"msosptIrregularSeal1",
+72:"msosptIrregularSeal2",
+73:"msosptLightningBolt",
+74:"msosptHeart",
+75:"msosptPictureFrame",
+76:"msosptQuadArrow",
+77:"msosptLeftArrowCallout",
+78:"msosptRightArrowCallout",
+79:"msosptUpArrowCallout",
+80:"msosptDownArrowCallout",
+81:"msosptLeftRightArrowCallout",
+82:"msosptUpDownArrowCallout",
+83:"msosptQuadArrowCallout",
+84:"msosptBevel",
+85:"msosptLeftBracket",
+86:"msosptRightBracket",
+87:"msosptLeftBrace",
+88:"msosptRightBrace",
+89:"msosptLeftUpArrow",
+90:"msosptBentUpArrow",
+91:"msosptBentArrow",
+92:"msosptSeal24",
+93:"msosptStripedRightArrow",
+94:"msosptNotchedRightArrow",
+95:"msosptBlockArc",
+96:"msosptSmileyFace",
+97:"msosptVerticalScroll",
+98:"msosptHorizontalScroll",
+99:"msosptCircularArrow",
+100:"msosptNotchedCircularArrow",
+101:"msosptUturnArrow",
+102:"msosptCurvedRightArrow",
+103:"msosptCurvedLeftArrow",
+104:"msosptCurvedUpArrow",
+105:"msosptCurvedDownArrow",
+106:"msosptCloudCallout",
+107:"msosptEllipseRibbon",
+108:"msosptEllipseRibbon2",
+109:"msosptFlowChartProcess",
+110:"msosptFlowChartDecision",
+111:"msosptFlowChartInputOutput",
+112:"msosptFlowChartPredefinedProcess",
+113:"msosptFlowChartInternalStorage",
+114:"msosptFlowChartDocument",
+115:"msosptFlowChartMultidocument",
+116:"msosptFlowChartTerminator",
+117:"msosptFlowChartPreparation",
+118:"msosptFlowChartManualInput",
+119:"msosptFlowChartManualOperation",
+120:"msosptFlowChartConnector",
+121:"msosptFlowChartPunchedCard",
+122:"msosptFlowChartPunchedTape",
+123:"msosptFlowChartSummingJunction",
+124:"msosptFlowChartOr",
+125:"msosptFlowChartCollate",
+126:"msosptFlowChartSort",
+127:"msosptFlowChartExtract",
+128:"msosptFlowChartMerge",
+129:"msosptFlowChartOfflineStorage",
+130:"msosptFlowChartOnlineStorage",
+131:"msosptFlowChartMagneticTape",
+132:"msosptFlowChartMagneticDisk",
+133:"msosptFlowChartMagneticDrum",
+134:"msosptFlowChartDisplay",
+135:"msosptFlowChartDelay",
+136:"msosptTextPlainText",
+137:"msosptTextStop",
+138:"msosptTextTriangle",
+139:"msosptTextTriangleInverted",
+140:"msosptTextChevron",
+141:"msosptTextChevronInverted",
+142:"msosptTextRingInside",
+143:"msosptTextRingOutside",
+144:"msosptTextArchUpCurve",
+145:"msosptTextArchDownCurve",
+146:"msosptTextCircleCurve",
+147:"msosptTextButtonCurve",
+148:"msosptTextArchUpPour",
+149:"msosptTextArchDownPour",
+150:"msosptTextCirclePour",
+151:"msosptTextButtonPour",
+152:"msosptTextCurveUp",
+153:"msosptTextCurveDown",
+154:"msosptTextCascadeUp",
+155:"msosptTextCascadeDown",
+156:"msosptTextWave1",
+157:"msosptTextWave2",
+158:"msosptTextWave3",
+159:"msosptTextWave4",
+160:"msosptTextInflate",
+161:"msosptTextDeflate",
+162:"msosptTextInflateBottom",
+163:"msosptTextDeflateBottom",
+164:"msosptTextInflateTop",
+165:"msosptTextDeflateTop",
+166:"msosptTextDeflateInflate",
+167:"msosptTextDeflateInflateDeflate",
+168:"msosptTextFadeRight",
+169:"msosptTextFadeLeft",
+170:"msosptTextFadeUp",
+171:"msosptTextFadeDown",
+172:"msosptTextSlantUp",
+173:"msosptTextSlantDown",
+174:"msosptTextCanUp",
+175:"msosptTextCanDown",
+176:"msosptFlowChartAlternateProcess",
+177:"msosptFlowChartOffpageConnector",
+178:"msosptCallout90",
+179:"msosptAccentCallout90",
+180:"msosptBorderCallout90",
+181:"msosptAccentBorderCallout90",
+182:"msosptLeftRightUpArrow",
+183:"msosptSun",
+184:"msosptMoon",
+185:"msosptBracketPair",
+186:"msosptBracePair",
+187:"msosptSeal4",
+188:"msosptDoubleWave",
+189:"msosptActionButtonBlank",
+190:"msosptActionButtonHome",
+191:"msosptActionButtonHelp",
+192:"msosptActionButtonInformation",
+193:"msosptActionButtonForwardNext",
+194:"msosptActionButtonBackPrevious",
+195:"msosptActionButtonEnd",
+196:"msosptActionButtonBeginning",
+197:"msosptActionButtonReturn",
+198:"msosptActionButtonDocument",
+199:"msosptActionButtonSound",
+200:"msosptActionButtonMovie",
+201:"msosptHostControl",
+202:"msosptTextBox",
+203:"msosptMax",
+0xffff:"msosptNil",
+}
+
+#
+def getFlagStr(flags):
+
+    flagStr = ""
+
+    if flags & 1:
+        flagStr += "|fGroup"
+    if flags & 2:
+        flagStr += "|fChild"
+    if flags & 4:
+        flagStr += "|fPatriarch"
+    if flags & 8:
+        flagStr += "|fDeleted"
+    if flags & 0x10:
+        flagStr += "|fOleShape"
+    if flags & 0x20:
+        flagStr += "|fHaveMaster"
+    if flags & 0x40:
+        flagStr += "|fFlipH"
+    if flags & 0x80:
+        flagStr += "|fFlipV"
+    if flags & 0x100:
+        flagStr += "|fConnector"
+    if flags & 0x200:
+        flagStr += "|fHaveAnchor"
+    if flags & 0x400:
+        flagStr += "|fHaveBackground"
+    if flags & 0x800:
+        flagStr += "|fHaveSpt"
+    if flags & 0xfffff000:
+        flagStr += "|RESERVED!!"
+
+    return flagStr
+
+#
+def spPrinter(data, dLen, shapeType, depth):
+    if dLen != 8:
+        print "Warning: msofbtSp length (%d) != 8" % (dLen)
+    else:
+        spid, flags = struct.unpack("<LL", data[:8])
+        try:
+            sTypeStr = shapeTypeMap[shapeType]
+        except KeyError:
+            sTypeStr = "UNDEF"
+
+        print(" "*(depth*4) + "Shape type %#x (%s), id %#x (%d), flags %#x (%s)" %
+                    (shapeType, sTypeStr, spid, spid, flags, getFlagStr(flags)))
+
+#
 msoDrawTypeMap = {
         0xf002:["msofbtDgContainer", "per sheet/page/slide data", None],
         0xf008:["msofbtDg", "an FDG", None],
@@ -103,7 +360,7 @@ msoDrawTypeMap = {
         0xf003:["msofbtSpgrContainer", "several SpContainers, the first of which is the group shape itself", None],
         0xf004:["msofbtSpContainer", "a shape", None],
         0xf009:["msofbtSpgr", "an FSPGR", None],
-        0xf00a:["msofbtSp", "an FSP", None],
+        0xf00a:["msofbtSp", "an FSP", spPrinter],
         0xf00b:["msofbtOPT", "a shape property table", optPrinter],
         0xf121:["msofbtSecondaryOPT", "a shape property table", optPrinter],
         0xf122:["msofbtTertiaryOPT", "a shape property table", optPrinter],
