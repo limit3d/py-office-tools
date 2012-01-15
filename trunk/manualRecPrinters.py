@@ -431,6 +431,18 @@ def spPrinter(data, dLen, shapeType, depth):
                     (shapeType, sTypeStr, spid, spid, flags, getFlagStr(flags)))
 
 #
+def dgPrinter(data, dLen, did, depth):
+    if dLen != 8:
+        print "Warning: msofbtDg length (%d) != 8" % (dLen)
+    else:
+        csp, spidCur = struct.unpack("<LL", data[:8])
+
+        print(" "*(depth*4) +
+                "Drawing group id %#x (%d),  # shapes %#x (%d), last spid %#x (%d)" %
+                (did, did, csp, csp, spidCur, spidCur))
+
+
+#
 def dggPrinter(data, dLen, dummy, depth):
     if dLen < 0x10:
         print "Warning: msofbtDgg length (%d) < 0x10" % (dLen)
@@ -469,7 +481,7 @@ msoDrawTypeMap = {
         0xf005:["msofbtSolverContainer", "the rules governing shapes", None],
         0xf006:["msofbtDgg", "an FDGG and several FIDCLs", dggPrinter],
         0xf007:["msofbtBSE", "an FBSE", None],
-        0xf008:["msofbtDg", "an FDG", None],
+        0xf008:["msofbtDg", "an FDG", dgPrinter],
         0xf009:["msofbtSpgr", "an FSPGR", None],
         0xf00a:["msofbtSp", "an FSP", spPrinter],
         0xf00b:["msofbtOPT", "a shape property table", optPrinter],
