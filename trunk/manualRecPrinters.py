@@ -431,6 +431,35 @@ def spPrinter(data, dLen, shapeType, depth):
                     (shapeType, sTypeStr, spid, spid, flags, getFlagStr(flags)))
 
 #
+def dggPrinter(data, dLen, dummy, depth):
+    if dLen < 0x10:
+        print "Warning: msofbtDgg length (%d) < 0x10" % (dLen)
+        return
+
+    spidMax, cidcl, cspSaved, cdgSaved = struct.unpack("<LLLL", data[:0x10])
+
+    print(" "*(depth*4) +
+    "Max ShapeID %#x (%d), FIDCL count %#x (%d), # saved shapes %#x (%d), # saved drawings %#x (%d)" %
+                    (spidMax, spidMax, cidcl, cidcl, cspSaved, cspSaved, cdgSaved, cdgSaved)
+                    )
+
+    #the spec seems to be wrong, cidcl == cluster size + 1 ??
+    print " "*(depth*4) + "Dumping File ID Cluster Table w/ %d entries.." % (cidcl - 1)
+    off = 16
+    i = 1
+    
+    while off <= dLen - 8 and cidcl - 1 > 0:
+        dgid, cspidCur = struct.unpack("<LL", data[off:off+8])
+        print(" "*((depth+1)*4) + "%d) dgid %#x (%d), #spids used %#x (%d)" %
+                (i, dgid, dgid, cspidCur, cspidCur))
+        off += 8
+        cidcl -= 1
+        i += 1
+
+    if off != dLen:
+        print "Warning: off/Dlen mismatch %d/%d" % (off, dLen)
+
+#
 msoDrawTypeMap = {
         0xf000:["msofbtDggContainer", "per document data", None],
         0xf001:["msofbtBstoreContainer", "all images in the document", None],
@@ -438,7 +467,7 @@ msoDrawTypeMap = {
         0xf003:["msofbtSpgrContainer", "several SpContainers, the first of which is the group shape itself", None],
         0xf004:["msofbtSpContainer", "a shape", None],
         0xf005:["msofbtSolverContainer", "the rules governing shapes", None],
-        0xf006:["msofbtDgg", "an FDGG and several FIDCLs", None],
+        0xf006:["msofbtDgg", "an FDGG and several FIDCLs", dggPrinter],
         0xf007:["msofbtBSE", "an FBSE", None],
         0xf008:["msofbtDg", "an FDG", None],
         0xf009:["msofbtSpgr", "an FSPGR", None],
