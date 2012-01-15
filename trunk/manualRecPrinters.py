@@ -12,31 +12,103 @@ from util import hexdump
 # 'len' bytes data
 # the following dictionary contains the basic subtypes, there are more sub-subtypes
 
+#
+def getCmoFlagStr(flags):
+
+    flagStr = ""
+
+    if flags & 1:
+        flagStr += "|fLocked"
+    if flags & 0x10:
+        flagStr += "|fPrint"
+    if flags & 0x20:
+        flagStr += "|fHaveMaster"
+    if flags & 0x2000:
+        flagStr += "|fAutoFill"
+    if flags & 0x4000:
+        flagStr += "|fAutoLine"
+
+    return flagStr
+
+#
+ftCmoTypeMap = {
+0x0:"Group",
+0x1:"Line",
+0x2:"Rectangle",
+0x3:"Oval",
+0x4:"Arc",
+0x5:"Chart",
+0x6:"Text",
+0x7:"Button",
+0x8:"Picture",
+0x9:"Polygon",
+0xA:"(Reserved)",
+0xB:"Check box",
+0xC:"Option button",
+0xD:"Edit box",
+0xE:"Label",
+0xF:"Dialog box",
+0x10:"Spinner",
+0x11:"Scroll bar",
+0x12:"List box",
+0x13:"Group box",
+0x14:"Combo box",
+0x15:"(Reserved)",
+0x16:"(Reserved)",
+0x17:"(Reserved)",
+0x18:"(Reserved)",
+0x19:"Comment",
+0x1A:"(Reserved)",
+0x1B:"(Reserved)",
+0x1C:"(Reserved)",
+0x1D:"(Reserved)",
+0x1E:"Microsoft Office drawing",
+}
+
+def cmoPrinter(data, dLen, depth):
+
+    if dLen != 0x12:
+        print "Warning: ftCmo length (%d) != 0x12" % (dLen)
+        return
+    
+    ot, oid, grbit, res1, res2, res3 = struct.unpack("<HHHLLL", data[:0x12])
+    try:
+        ots = ftCmoTypeMap[ot]
+    except KeyError:
+        ots = "UNDEF"
+
+    print(" "*(depth*4) +
+        "ftCmo.ot %#x (%s), ftCmo.id %#x (%d), ftCmo.grbit %#x (%s), ftCmo.res %#x.%#x.%#x" %
+        (ot, ots, oid, oid, grbit, getCmoFlagStr(grbit), res1, res2, res3)
+    )
+
+#
 objSubTypeMap = {
-        0x00:["ftEnd", "End of OBJ Record"],
-        0x01:["(Reserved)", "(Reserved)"],
-        0x02:["(Reserved)", "(Reserved)"],
-        0x03:["(Reserved)", "(Reserved)"],
-        0x04:["ftMacro", "Fmla-style macro"],
-        0x05:["ftButton", "Command button"],
-        0x06:["ftGmo", "Group Marker"],
-        0x07:["ftCf", "Clipboard format"],
-        0x08:["ftPioGrbit", "Picture option flags"],
-        0x09:["ftPictFmla", "Picture fmla-style macro"],
-        0x0a:["ftCbls", "Checkboxlink"],
-        0x0b:["ftRbo", "Radio button"],
-        0x0c:["ftSbs", "Scroll bar"],
-        0x0d:["ftNts", "Note structure"],
-        0x0e:["ftSbsFmla", "Scroll bar fmla-style macro"],
-        0x0f:["ftGboData", "Group box data"],
-        0x10:["ftEdoData", "Edit control data"],
-        0x11:["ftRboData", "Radio button data"],
-        0x12:["ftCblsData", "Check box data"],
-        0x13:["ftLbsData", "List box data"],
-        0x14:["ftCblsFmla", "Check box link fmla-style macro"],
-        0x15:["ftCmo", "Common object data"],
+        0x00:["ftEnd", "End of OBJ Record", None],
+        0x01:["(Reserved)", "(Reserved)", None],
+        0x02:["(Reserved)", "(Reserved)", None],
+        0x03:["(Reserved)", "(Reserved)", None],
+        0x04:["ftMacro", "Fmla-style macro", None],
+        0x05:["ftButton", "Command button", None],
+        0x06:["ftGmo", "Group Marker", None],
+        0x07:["ftCf", "Clipboard format", None],
+        0x08:["ftPioGrbit", "Picture option flags", None],
+        0x09:["ftPictFmla", "Picture fmla-style macro", None],
+        0x0a:["ftCbls", "Checkboxlink", None],
+        0x0b:["ftRbo", "Radio button", None],
+        0x0c:["ftSbs", "Scroll bar", None],
+        0x0d:["ftNts", "Note structure", None],
+        0x0e:["ftSbsFmla", "Scroll bar fmla-style macro", None],
+        0x0f:["ftGboData", "Group box data", None],
+        0x10:["ftEdoData", "Edit control data", None],
+        0x11:["ftRboData", "Radio button data", None],
+        0x12:["ftCblsData", "Check box data", None],
+        0x13:["ftLbsData", "List box data", None],
+        0x14:["ftCblsFmla", "Check box link fmla-style macro", None],
+        0x15:["ftCmo", "Common object data", cmoPrinter],
         }
-def objSubPrinter(data, dLen):
+
+def objSubPrinter(data, dLen, depth=2):
 
     off = 0
     while off <= dLen - 4:
@@ -45,6 +117,13 @@ def objSubPrinter(data, dLen):
             desc = objSubTypeMap[t]
             print("        Subtype %s [%#x (%d)] offset %#x, len %#x (%d) (%s)" %
                     (desc[0], t, t, off, l, l, desc[1]))
+            
+            lenLeft = min(l, dLen - off - 4)
+            
+            if desc[2]:
+                desc[2](data[off+4:off+4+lenLeft], lenLeft, depth + 1)
+            else:
+                print hexdump(data[off+4:off+4+lenLeft], indent=(depth + 1)*4),
         except KeyError:
             print "        obj.subtype %#x (%d) obj.sublen %#x (%d)" % (t, t, l, l)
         off += l + 4
