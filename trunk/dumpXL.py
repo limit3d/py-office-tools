@@ -3,6 +3,7 @@
 import sys
 import struct
 from util import hexdump
+from util import ensure 
 from xlRecs import recDict
 from manualRecPrinters import extraPrinters
 
@@ -13,14 +14,6 @@ RECOVER_COUNT = 5
 
 XL_HDRLEN = 4
 
-
-#
-def ensure(field, n, nLeft):
-    if nLeft < n:
-        print "WARNING: field '%s', not enough data left (want %d, have %d). Perhaps optional field." % \
-                (field, n, nLeft)
-        return False
-    return True
 
 #
 def printRec(rType, rLen, rData, rCount, rOffset):
