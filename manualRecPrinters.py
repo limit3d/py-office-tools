@@ -2,6 +2,7 @@
 
 import struct
 from util import hexdump
+from util import printFmt
 
 #i hacked this together on a whim to add some extra support, it's not pretty
 
@@ -482,7 +483,7 @@ msoDrawTypeMap = {
         0xf006:["msofbtDgg", "an FDGG and several FIDCLs", dggPrinter],
         0xf007:["msofbtBSE", "an FBSE", None],
         0xf008:["msofbtDg", "an FDG", dgPrinter],
-        0xf009:["msofbtSpgr", "an FSPGR", None],
+        0xf009:["msofbtSpgr", "an FSPGR", ["4%4%4%4%", ["left", "top", "right", "bottom"]]],
         0xf00a:["msofbtSp", "an FSP", spPrinter],
         0xf00b:["msofbtOPT", "a shape property table", optPrinter],
         0xf00c:["msofbtTextbox", "RTF Text", None],
@@ -537,7 +538,10 @@ def msoDrawPrinter(data, dLen, depth=2):
                 
                 #print out sub-record data with custom printer if available
                 if desc[2]:
-                    desc[2](data[off+8:off+8+lenLeft], lenLeft, inst, depth + 1)
+                    if isinstance(desc[2],  list):
+                        printFmt(data[off+8:off+8+lenLeft], lenLeft, desc[2][0], desc[2][1], depth + 1)
+                    elif callable(desc[2]):
+                        desc[2](data[off+8:off+8+lenLeft], lenLeft, inst, depth + 1)
                 else:
                     print hexdump(data[off+8:off+8+lenLeft], indent=(depth + 1)*4),
         except KeyError:
