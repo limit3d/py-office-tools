@@ -462,7 +462,12 @@ def dggPrinter(data, dLen, dummy, depth):
     i = 1
     
     while off <= dLen - 8 and cidcl - 1 > 0:
-        dgid, cspidCur = struct.unpack("<LL", data[off:off+8])
+        try:
+            dgid, cspidCur = struct.unpack("<LL", data[off:off+8])
+        except struct.error:
+            print "Warning: Can't unpack next dgid,cspidCur pair\nMaybe CONTINUE record?"
+            return
+
         print(" "*((depth+1)*4) + "%d) dgid %#x (%d), #spids used %#x (%d)" %
                 (i, dgid, dgid, cspidCur, cspidCur))
         off += 8
