@@ -292,9 +292,9 @@ recDict[0x4e] = ["MENUUND", "unknown:", "v%", [u'Unknown']]
 recDict[0x4f] = ["MOVESEL", "unknown:", "v%", [u'Unknown']]
 recDict[0x56] = ["BUILTINFMTCOUNT", "unknown:", "v%", [u'Unknown']]
 recDict[0x57] = ["SUPER Code Page Table", "unknown:", "v%", [u'Unknown']]
-recDict[0x58] = ["TOOLBAR", "unknown:", "v%", [u'Unknown']]
 
 #this was manually changed
+recDict[0x58] = ["TOOLBAR", "unknown:", "v%", [u'Unknown']]
 recDict[0x5d] = ["OBJ", "unknown:", "[obj]%", [u'Unknown']]
 #
 
@@ -331,7 +331,7 @@ recDict[0xa3] = ["PROJEXTSHT", "unknown:", "v%", [u'Unknown']]
 recDict[0xa4] = ["TOOLBARVER", "unknown:", "v%", [u'Unknown']]
 recDict[0xa5] = ["IMOOM", "unknown:", "v%", [u'Unknown']]
 recDict[0xa6] = ["TOOLBARPOS", "unknown:", "v%", [u'Unknown']]
-recDict[0xa7] = ["TOOLBARDEF", "unknown:", "v%", [u'Unknown']]
+recDict[0xa7] = ["TOOLBARDEF", "Toolbar Definition:", "1%2%v%", ["fUnnamed", "cbtn", u'rgbbtndef']]
 recDict[0xa8] = ["DRAGDROP", "unknown:", "v%", [u'Unknown']]
 recDict[0xaa] = ["DOCDIM", "unknown:", "v%", [u'Unknown']]
 recDict[0xac] = ["CHARTCOLORS", "unknown:", "v%", [u'Unknown']]

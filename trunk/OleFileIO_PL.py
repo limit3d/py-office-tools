@@ -769,6 +769,10 @@ class _OleDirectoryEntry:
         "Dump this entry, and all its subentries (for debug purposes only)"
         TYPES = ["(invalid)", "(storage)", "(stream)", "(lockbytes)",
                  "(property)", "(root)"]
+        if self.entry_type not in TYPES:
+            print "Warning: OLE type %#x not in types" % self.entry_type
+            return
+
         print " "*tab + repr(self.name), TYPES[self.entry_type],
         if self.entry_type in (STGTY_STREAM, STGTY_ROOT):
             print self.size, "bytes",
